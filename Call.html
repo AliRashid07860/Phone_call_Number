@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Scan to Call</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: #f2f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            padding: 30px 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        #qrcode {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 25px;
+            padding: 10px;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        #qrcode img,
+        #qrcode canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .download-btn {
+            background: #111827;
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: #000000;
+        }
+
+        .call-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .call-btn:hover {
+            background: #15803d;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 25px 18px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+
+            #qrcode {
+                width: 250px;
+                height: 250px;
+            }
+
+            button {
+                padding: 13px;
+            }
+        }
+
+        @media (max-width: 320px) {
+
+            #qrcode {
+                width: 220px;
+                height: 220px;
+            }
+
+            .card {
+                padding: 20px 12px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="card">
+
+        <div class="icon">📞</div>
+
+        <h1>Scan to Call</h1>
+
+        <p class="description">
+            Scan the QR code using your mobile phone
+            to start a call.
+        </p>
+
+        <div id="qrcode"></div>
+
+        <div class="buttons">
+
+            <button class="download-btn" onclick="downloadQR()">
+                ⬇️ Download QR Code
+            </button>
+
+            <button class="call-btn" onclick="makeCall()">
+                📞 Call Now
+            </button>
+
+        </div>
+
+        <p class="note">
+            Scan the QR code with your mobile camera.
+        </p>
+
+    </div>
+
+
+    <script>
+
+        // Fixed phone number
+        const phoneNumber = "8409951516";
+
+        // International format
+        const callLink = "tel:+91" + phoneNumber;
+
+
+        // Generate QR Code
+        function generateQR() {
+
+            const qrContainer = document.getElementById("qrcode");
+
+            qrContainer.innerHTML = "";
+
+            new QRCode(qrContainer, {
+                text: callLink,
+                width: 260,
+                height: 260,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+
+        // Download QR Code
+        function downloadQR() {
+
+            const canvas = document.querySelector("#qrcode canvas");
+
+            if (!canvas) {
+                alert("QR Code is not ready.");
+                return;
+            }
+
+            const downloadLink = document.createElement("a");
+
+            downloadLink.download = "Call-QR-Code.png";
+
+            downloadLink.href = canvas.toDataURL("image/png");
+
+            downloadLink.click();
+        }
+
+
+        // Call button
+        function makeCall() {
+
+            window.location.href = callLink;
+        }
+
+
+        // Generate QR when page loads
+        generateQR();
+
+    </script>
+
+</body>
+
+</html>
