@@ -5,93 +5,201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Scan to Call</title>
+    <title>Call QR Generator</title>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             font-family: Arial, sans-serif;
+            background: #eef1f5;
+            color: #111827;
+        }
+
+        /* =========================
+           GENERATOR SECTION
+        ========================= */
+
+        .generator-section {
             min-height: 100vh;
-            background: #f2f4f7;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
 
-        .card {
+        .generator-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 430px;
             background: #ffffff;
-            padding: 30px 25px;
-            border-radius: 20px;
+            padding: 32px 25px;
+            border-radius: 24px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.10);
             text-align: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
 
-        .icon {
-            font-size: 45px;
+        .phone-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .generator-card h1 {
+            font-size: 28px;
             margin-bottom: 10px;
         }
 
-        h1 {
-            font-size: 26px;
-            color: #222;
-            margin-bottom: 8px;
-        }
-
-        .description {
-            color: #666;
-            font-size: 15px;
+        .generator-card p {
+            color: #667085;
             line-height: 1.5;
             margin-bottom: 25px;
         }
 
-        #qrcode {
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 25px;
-            padding: 10px;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
+        .input-box {
+            text-align: left;
+            margin-bottom: 18px;
         }
 
-        #qrcode img,
-        #qrcode canvas {
-            max-width: 100%;
-            height: auto;
+        .input-box label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
 
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        button {
+        .input-box input {
             width: 100%;
-            padding: 14px;
+            height: 52px;
+            padding: 0 15px;
+            border: 1px solid #d0d5dd;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-box input:focus {
+            border-color: #2563eb;
+        }
+
+        .generate-btn {
+            width: 100%;
+            height: 52px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
+            background: #2563eb;
+            color: white;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
+        }
+
+        .generate-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .error {
+            display: none;
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+
+        /* =========================
+           QR RESULT SECTION
+        ========================= */
+
+        .result-section {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 55px 15px;
+        }
+
+        .result-card {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            padding: 40px 30px 35px;
+            border-radius: 28px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.10);
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 52px;
+            margin-bottom: 10px;
+        }
+
+        .result-card h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .result-description {
+            color: #667085;
+            font-size: 17px;
+            line-height: 1.45;
+            max-width: 410px;
+            margin: 0 auto 30px;
+        }
+
+
+        /* =========================
+           QR CODE
+        ========================= */
+
+        #qrcode {
+            width: 310px;
+            height: 310px;
+            margin: 0 auto 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        #qrcode canvas {
+            width: 290px !important;
+            height: 290px !important;
+        }
+
+        #qrcode img {
+            width: 290px;
+            height: 290px;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .download-btn,
+        .call-btn,
+        .back-btn {
+            width: 100%;
+            height: 62px;
+            border: none;
+            border-radius: 13px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         .download-btn {
             background: #111827;
             color: white;
+            margin-bottom: 15px;
         }
 
         .download-btn:hover {
@@ -101,147 +209,429 @@
         .call-btn {
             background: #16a34a;
             color: white;
+            margin-bottom: 25px;
         }
 
         .call-btn:hover {
             background: #15803d;
         }
 
-        .note {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #888;
-            line-height: 1.5;
+        .back-btn {
+            height: 50px;
+            background: #f2f4f7;
+            color: #344054;
+            font-size: 15px;
         }
 
-        @media (max-width: 480px) {
+        .back-btn:hover {
+            background: #e4e7ec;
+        }
 
-            body {
+        .bottom-text {
+            color: #8a8f98;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .generator-section {
                 padding: 15px;
             }
 
-            .card {
-                padding: 25px 18px;
-                border-radius: 16px;
+            .generator-card {
+                padding: 28px 20px;
+                border-radius: 22px;
             }
 
-            h1 {
-                font-size: 23px;
+            .generator-card h1 {
+                font-size: 25px;
+            }
+
+            .result-section {
+                padding: 20px 10px;
+            }
+
+            .result-card {
+                padding: 32px 18px 30px;
+                border-radius: 24px;
+            }
+
+            .result-card h2 {
+                font-size: 30px;
+            }
+
+            .result-description {
+                font-size: 16px;
             }
 
             #qrcode {
-                width: 250px;
-                height: 250px;
+                width: 280px;
+                height: 280px;
+                margin-bottom: 30px;
             }
 
-            button {
-                padding: 13px;
+            #qrcode canvas {
+                width: 260px !important;
+                height: 260px !important;
+            }
+
+            #qrcode img {
+                width: 260px;
+                height: 260px;
+            }
+
+            .download-btn,
+            .call-btn {
+                height: 58px;
+                font-size: 17px;
             }
         }
 
-        @media (max-width: 320px) {
 
-            #qrcode {
-                width: 220px;
-                height: 220px;
+        @media (max-width: 350px) {
+
+            .result-card {
+                padding-left: 12px;
+                padding-right: 12px;
             }
 
-            .card {
-                padding: 20px 12px;
+            #qrcode {
+                width: 240px;
+                height: 240px;
+            }
+
+            #qrcode canvas {
+                width: 225px !important;
+                height: 225px !important;
+            }
+
+            #qrcode img {
+                width: 225px;
+                height: 225px;
+            }
+
+            .result-card h2 {
+                font-size: 27px;
             }
         }
     </style>
-
 </head>
+
 
 <body>
 
-    <div class="card">
 
-        <div class="icon">📞</div>
+    <!-- =========================
+         GENERATOR PAGE
+    ========================== -->
 
-        <h1>Scan to Call</h1>
+    <section class="generator-section" id="generator">
 
-        <p class="description">
-            Scan the QR code using your mobile phone
-            to start a call.
-        </p>
+        <div class="generator-card">
 
-        <div id="qrcode"></div>
+            <div class="phone-icon">
+                📞
+            </div>
 
-        <div class="buttons">
+            <h1>Call QR Generator</h1>
 
-            <button class="download-btn" onclick="downloadQR()">
-                ⬇️ Download QR Code
-            </button>
+            <p>
+                Enter a phone number and generate
+                a QR code for quick calling.
+            </p>
 
-            <button class="call-btn" onclick="makeCall()">
-                📞 Call Now
+            <div class="input-box">
+
+                <label for="phoneNumber">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="phoneNumber"
+                    placeholder="Enter phone number"
+                    inputmode="tel"
+                >
+
+                <div class="error" id="error">
+                    Please enter a valid phone number.
+                </div>
+
+            </div>
+
+            <button
+                class="generate-btn"
+                onclick="generateQR()"
+            >
+                Generate QR Code
             </button>
 
         </div>
 
-        <p class="note">
-            Scan the QR code with your mobile camera.
-        </p>
+    </section>
 
-    </div>
+
+    <!-- =========================
+         QR RESULT PAGE
+    ========================== -->
+
+    <section
+        class="result-section hidden"
+        id="result"
+    >
+
+        <div class="result-card">
+
+            <div class="result-icon">
+                📞
+            </div>
+
+            <h2>
+                Scan to Call
+            </h2>
+
+            <p class="result-description">
+                Scan the QR code using your mobile
+                phone to start a call.
+            </p>
+
+
+            <!-- QR CODE -->
+
+            <div id="qrcode"></div>
+
+
+            <!-- DOWNLOAD -->
+
+            <button
+                class="download-btn"
+                onclick="downloadQR()"
+            >
+                ⬇️ Download QR Code
+            </button>
+
+
+            <!-- CALL NOW -->
+
+            <button
+                class="call-btn"
+                onclick="callNumber()"
+            >
+                📞 Call Now
+            </button>
+
+
+            <p class="bottom-text">
+                Scan the QR code with your mobile camera.
+            </p>
+
+
+            <!-- BACK -->
+
+            <button
+                class="back-btn"
+                onclick="goBack()"
+            >
+                ↑ Generate Another QR
+            </button>
+
+        </div>
+
+    </section>
 
 
     <script>
 
-        // Fixed phone number
-        const phoneNumber = "8409951516";
-
-        // International format
-        const callLink = "tel:+91" + phoneNumber;
+        let currentNumber = "";
 
 
-        // Generate QR Code
+        // =========================
+        // GENERATE QR
+        // =========================
+
         function generateQR() {
 
-            const qrContainer = document.getElementById("qrcode");
+            const input =
+                document.getElementById("phoneNumber");
 
-            qrContainer.innerHTML = "";
+            const error =
+                document.getElementById("error");
 
-            new QRCode(qrContainer, {
-                text: callLink,
-                width: 260,
-                height: 260,
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
+            let number =
+                input.value.trim();
 
 
-        // Download QR Code
-        function downloadQR() {
+            // Remove spaces, brackets and hyphens
 
-            const canvas = document.querySelector("#qrcode canvas");
+            number =
+                number.replace(/[\s()-]/g, "");
 
-            if (!canvas) {
-                alert("QR Code is not ready.");
+
+            // Validation
+
+            if (!number) {
+
+                error.style.display = "block";
+
+                error.textContent =
+                    "Please enter a phone number.";
+
                 return;
             }
 
-            const downloadLink = document.createElement("a");
 
-            downloadLink.download = "Call-QR-Code.png";
+            if (!/^\+?\d{7,15}$/.test(number)) {
 
-            downloadLink.href = canvas.toDataURL("image/png");
+                error.style.display = "block";
 
-            downloadLink.click();
+                error.textContent =
+                    "Please enter a valid phone number.";
+
+                return;
+            }
+
+
+            error.style.display = "none";
+
+
+            // If 10 digit Indian number
+            // automatically add +91
+
+            if (/^\d{10}$/.test(number)) {
+
+                number = "+91" + number;
+            }
+
+
+            currentNumber = number;
+
+
+            // Clear previous QR
+
+            const qr =
+                document.getElementById("qrcode");
+
+            qr.innerHTML = "";
+
+
+            // Generate REAL QR
+
+            new QRCode(qr, {
+
+                text: "tel:" + currentNumber,
+
+                width: 290,
+
+                height: 290,
+
+                correctLevel:
+                    QRCode.CorrectLevel.H
+
+            });
+
+
+            // Show result
+
+            const result =
+                document.getElementById("result");
+
+            result.classList.remove("hidden");
+
+
+            // Smooth slide / scroll
+
+            setTimeout(function () {
+
+                result.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }, 150);
+
         }
 
 
-        // Call button
-        function makeCall() {
+        // =========================
+        // DOWNLOAD QR
+        // =========================
 
-            window.location.href = callLink;
+        function downloadQR() {
+
+            const canvas =
+                document.querySelector("#qrcode canvas");
+
+
+            if (!canvas) {
+
+                alert("Please generate a QR code first.");
+
+                return;
+            }
+
+
+            const link =
+                document.createElement("a");
+
+
+            link.download =
+                "Call-QR-Code.png";
+
+
+            link.href =
+                canvas.toDataURL("image/png");
+
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+
         }
 
 
-        // Generate QR when page loads
-        generateQR();
+        // =========================
+        // CALL NOW
+        // =========================
+
+        function callNumber() {
+
+            if (!currentNumber) {
+
+                return;
+            }
+
+            window.location.href =
+                "tel:" + currentNumber;
+
+        }
+
+
+        // =========================
+        // GO BACK
+        // =========================
+
+        function goBack() {
+
+            document.getElementById("generator")
+                .scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+        }
 
     </script>
 
